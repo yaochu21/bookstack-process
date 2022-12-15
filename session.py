@@ -5,11 +5,14 @@ import re
 
 # a class to keep information related to a subtitle
 class Subtitle:
-    def __init__(self,string,level,start_index,end_index):
-        self.string = string
+    def __init__(self,text,level,start_index,end_index):
+        self.text = text
         self.level = level
         self.s = start_index
         self.e = end_index
+    
+    def to_dict(self):
+        return {"text":self.text,"level":self.level,"s":self.s,"e":self.e}
 
 # a class to keep context related to a single processing session
 class Pipe:
@@ -101,6 +104,7 @@ class Pipe:
                 return True
         return False
 
-    def get_subtitles_json(self):
-        sorted_subtitles = sorted(self.subtitles,key=lambda sub: sub.s)
-        
+    def get_json_data(self):
+        sorted_subtitles_dict =[subtitle.to_dict() for subtitle in sorted(self.subtitles,key=lambda sub: sub.s)]
+        data = {"url":self.url,"text":self.text,"name":self.name,"tags":self.tags,"title":self.title,"subtitles":sorted_subtitles_dict}
+        return json.dumps(data)
