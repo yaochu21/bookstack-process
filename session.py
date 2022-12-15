@@ -16,7 +16,7 @@ class Pipe:
     def __init__(self,url):
         self.url = url
         self.text = ""      # xml text string representing the article that is put through stages of formatting
-        self.name = ""      # name of the author
+        self.name = ""      # name of the author, not implemented
         self.date = ""      # publication date
         self.tags = []      # a list of tags
         self.title = ""     # the main title of the article
@@ -66,18 +66,16 @@ class Pipe:
             return
         for i,s in enumerate(["h1","h2","h3","hi"]):
             pattern = re.compile(r'<%s(.*?)</%s>' % (s,s))
-            matched_subtitles = []
             for matchobj in re.finditer(pattern,self.text):
                 subtitle = Subtitle(matchobj.group(1),i+1,matchobj.start(),matchobj.end())
-                matched_subtitles.append(subtitle)
-            self.subtitles.extend(matched_subtitles)
+                self.subtitles.append(subtitle)
         
     def identify_non_formatted_titles(self,ruleset=[]):
         if (len(self.text) <= 0):
             print("no text to to process")
             return
-        ruleset.append(self.title_length_rule)
-        pattern = re.compile(r'<p>(.*?)</p>')
+        ruleset.extend([self.title_length_rule,self.title_prefix_rule])
+        pattern = re.compile(r'<p(.*?)</p>')
 
         for match in re.finditer(pattern,self.text):
             line = match.group(1)
@@ -88,9 +86,21 @@ class Pipe:
     def title_length_rule(line,thresh=15):
         return len(line) <= 15
 
-    def prefix_rule(line):
-        prefix_patterns = [r'^[A-Z][.,、，]',r'^[0-9]+[.,、，]',r'']
+    def title_prefix_rule(line):
+        prefix_patterns = [r'^[A-Z][.,、，]',
+                           r'^[0-9]+[.,、，]',
+                           r'^\([A-Z]\)[.,、，]*',
+                           r'^\([0-9]+\)[.,、，]*',
+                           r'^[一二三四五六七八九十+][.,、，]',
+                           r'^\([一二三四五六七八九十]+\)[.,、，]*']
 
-       
+        for prefix_pattern in prefix_patterns:
+            pattern = re.compile(prefix_pattern)
+            match = re.search(pattern,line)
+            if (match != None):
+                return True
+        return False
 
-
+    def get_subtitles_json(self):
+        sorted_subtitles = sorted(self.subtitles,key=lambda sub: sub.s)
+        
