@@ -1,4 +1,5 @@
 
+# incomplete & deprecated, this request should be handled by the client side
 class BookstackRequest:
     def __init__(self,data_dict,token,token_id,book_id):
         self.data_dict = data_dict
@@ -11,4 +12,3 @@ class BookstackRequest:
         name = self.data_dict["title"]
         tags = [{"发布年份"}]
         tags.extend([{"name":"关键词","value":entry} for entry in self.data_dict["tags"]])
-
