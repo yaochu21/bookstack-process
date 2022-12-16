@@ -22,27 +22,3 @@ pipe_data = pipe.get_json_data()
 
 with open('pipe.json','w') as f:
     f.write(pipe_data)
-
-"""
-token = "OxrfZbHz09xnUSbm6mRb7aY1XtwjRmU8"
-token_id = "vZdwWsto1ZJHjyvQ9mDmzp9dZTDh3Z7I"
-
-api_url = "https://report.laodongqushi.com/api/pages"
-book_id = 1
-name = "测试页面"
-html = "<p>test</p>"
-tags = [
-    {'name':'作者/机构','value':'某作者'},
-    {'name':'地区','value':'全国'}
-]
-post_data = {
-    "book_id":book_id,
-    "name":name,
-    "html":html,
-    "tags":tags
-}
-headers = {
-    "Authorization":"Token vZdwWsto1ZJHjyvQ9mDmzp9dZTDh3Z7I:OxrfZbHz09xnUSbm6mRb7aY1XtwjRmU8",
-}
-ret = requests.post(api_url,json=post_data,headers=headers)
-"""

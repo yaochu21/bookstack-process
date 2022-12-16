@@ -112,8 +112,14 @@ class Pipe:
                 return True
         return False
 
-    def get_json_data(self):
+    def get_dict_data(self):
         sorted_subtitles_dict =[subtitle.to_dict() for subtitle in sorted(self.subtitles,key=lambda sub: sub.s,reverse=False)]
         data = {"url":self.url,"text":self.text,"author":self.author,"tags":self.tags,"title":self.title,"subtitles":sorted_subtitles_dict}
+        return data
+
+    def get_json_data(self):
+        data = self.get_dict_data()
         data_string = json.dumps(data,ensure_ascii=False).encode('utf-8')
         return data_string.decode()
+
+    
