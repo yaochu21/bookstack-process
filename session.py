@@ -19,27 +19,31 @@ class Pipe:
     def __init__(self,url):
         self.url = url
         self.text = ""      # xml text string representing the article that is put through stages of formatting
-        self.name = ""      # name of the author, not implemented
+        self.author = ""      # name of the author, not implemented
         self.date = ""      # publication date
         self.tags = []      # a list of tags
         self.title = ""     # the main title of the article
         self.subtitles = [] # a list of Subtitle objects
 
-    def extract_main(self,include_tables=False,include_imgs=False):
+    def extract_main(self,include_tables=True,include_imgs=True):
         fetched = tra.fetch_url(self.url)
         if (fetched == None):
             print("failed to fetch")
             return
         result_text = tra.extract(fetched,output_format="xml",include_formatting=True,include_images=include_imgs,include_tables=include_tables)
         self.text = result_text
+        with open('result_text.txt','w') as f:
+            f.write(result_text)
 
     def extract_metadata(self):
         if (len(self.text) <= 0):
             print("no text to to process")
             return
-        pattern = re.compile(r'<doc.*title="(.*?)".*date="(.*?)".*tags="(.*?).*">')
+        pattern = re.compile(r'<doc.*title="(.*?)".*date="(.*?)".*tags="(.*?)".*>')
         match_obj = re.search(pattern,self.text)
         self.title,self.date,self.tags = match_obj.group(1),match_obj.group(2),match_obj.group(3).split(',')
+
+        print([self.tags,self.date,self.title])
 
     def format_images(self,img_tag="graphic"):
         if (len(self.text) <= 0):
@@ -58,6 +62,10 @@ class Pipe:
         pattern = re.compile(r'<table.*?</table>')
         tables_page = re.findall(pattern,page.text)
         tables_xml = re.findall(pattern,self.text)
+
+        # print(tables_page)
+        # print(tables_xml)
+
         for i,table in enumerate(tables_xml):
             if (i >= len(tables_page)):
                 break
@@ -68,7 +76,7 @@ class Pipe:
             print("no text to to process")
             return
         for i,s in enumerate(["h1","h2","h3","hi"]):
-            pattern = re.compile(r'<%s(.*?)</%s>' % (s,s))
+            pattern = re.compile(r'<%s.*>(.*?)</%s>' % (s,s))
             for matchobj in re.finditer(pattern,self.text):
                 subtitle = Subtitle(matchobj.group(1),i+1,matchobj.start(),matchobj.end())
                 self.subtitles.append(subtitle)
@@ -77,8 +85,8 @@ class Pipe:
         if (len(self.text) <= 0):
             print("no text to to process")
             return
-        ruleset.extend([self.title_length_rule,self.title_prefix_rule])
-        pattern = re.compile(r'<p(.*?)</p>')
+        ruleset.extend([lambda x: (self.title_length_rule(x))])
+        pattern = re.compile(r'<p.*>(.*?)</p>')
 
         for match in re.finditer(pattern,self.text):
             line = match.group(1)
@@ -86,10 +94,10 @@ class Pipe:
                 subtitle = Subtitle(line,5,match.start(),match.end())
                 self.subtitles.append(subtitle)
         
-    def title_length_rule(line,thresh=15):
-        return len(line) <= 15
+    def title_length_rule(self,line,thresh=15):
+        return len(line) <= thresh
 
-    def title_prefix_rule(line):
+    def title_prefix_rule(self,line):
         prefix_patterns = [r'^[A-Z][.,、，]',
                            r'^[0-9]+[.,、，]',
                            r'^\([A-Z]\)[.,、，]*',
@@ -105,6 +113,7 @@ class Pipe:
         return False
 
     def get_json_data(self):
-        sorted_subtitles_dict =[subtitle.to_dict() for subtitle in sorted(self.subtitles,key=lambda sub: sub.s)]
-        data = {"url":self.url,"text":self.text,"name":self.name,"tags":self.tags,"title":self.title,"subtitles":sorted_subtitles_dict}
-        return json.dumps(data)
+        sorted_subtitles_dict =[subtitle.to_dict() for subtitle in sorted(self.subtitles,key=lambda sub: sub.s,reverse=False)]
+        data = {"url":self.url,"text":self.text,"author":self.author,"tags":self.tags,"title":self.title,"subtitles":sorted_subtitles_dict}
+        data_string = json.dumps(data,ensure_ascii=False).encode('utf-8')
+        return data_string.decode()
