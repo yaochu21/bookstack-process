@@ -7,6 +7,8 @@ import json
 我理解的架构是这样：
 我们有一个react的窗口，用户可以在这里提交一个调查报告的url。我们的后端用这个pipeline process一遍，程序提取出必要的信息之后，再返还给用户去确认。
 确认/修改之后（比如这个小标题其实不是小标题，这个标签错了，等等）再去提交。但这样的话这个pipeline是不是应该在用户/前端运行更好？你原来想的架构是什么样的？
+
+Maybe we need to talk on signal, github is public.
 '''
 
 urls = ["http://www.stats.gov.cn/tjsj/zxfb./202204/t20220429_1830126.html",
