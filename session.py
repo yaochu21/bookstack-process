@@ -25,6 +25,7 @@ class Pipe:
         self.title = ""     # the main title of the article
         self.subtitles = [] # a list of Subtitle objects
 
+    # use trafilatura to extract main portion of the article into xml-formatted string
     def extract_main(self,include_tables=True,include_imgs=True):
         fetched = tra.fetch_url(self.url)
         if (fetched == None):
@@ -62,9 +63,6 @@ class Pipe:
         pattern = re.compile(r'<table.*?</table>')
         tables_page = re.findall(pattern,page.text)
         tables_xml = re.findall(pattern,self.text)
-
-        # print(tables_page)
-        # print(tables_xml)
 
         for i,table in enumerate(tables_xml):
             if (i >= len(tables_page)):
@@ -121,5 +119,3 @@ class Pipe:
         data = self.get_dict_data()
         data_string = json.dumps(data,ensure_ascii=False).encode('utf-8')
         return data_string.decode()
-
-    
