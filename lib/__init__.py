@@ -1,13 +1,5 @@
 from .session import Pipe
-from .utils import validate_url
-
-def validate(input):
-    """
-    Validate the input string is a url
-    """
-    if not validate_url(input):
-        raise ValueError("Input is not a valid url")
-    return input
+from .utils import validate
 
 def extract(input):
     """
@@ -15,12 +7,27 @@ def extract(input):
     """
     url = validate(input)
     pipe = Pipe(url)
-    pipe.extract_main()
-    pipe.extract_metadata()
-    pipe.format_images()
-    pipe.format_tables()
-    pipe.identify_formatted_titles()
-    pipe.identify_non_formatted_titles()
+    try:
+        pipe.extract_main()
+    except Exception as e:
+        raise ValueError("Failed to extract main content: " + str(e))
+    try:
+        pipe.extract_metadata()
+    except Exception as e:
+        raise ValueError("Failed to extract metadata: " + str(e))
+    try:
+        pipe.format_images()
+    except Exception as e:
+        raise ValueError("Failed to format images: " + str(e))
+    try:
+        pipe.format_tables()
+    except Exception as e:
+        raise ValueError("Failed to format tables: " + str(e))
+    try:
+        pipe.identify_formatted_titles()
+        pipe.identify_non_formatted_titles()
+    except Exception as e:
+        raise ValueError("Failed to identify titles: " + str(e))
     pipe_data = pipe.get_dict_data()
     return pipe_data
 
