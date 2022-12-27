@@ -33,8 +33,8 @@ class Pipe:
             return
         result_text = tra.extract(fetched,output_format="xml",include_formatting=True,include_images=include_imgs,include_tables=include_tables)
         self.text = result_text
-        with open('result_text.txt','w') as f:
-            f.write(result_text)
+        # with open('result_text.txt','w') as f:
+        #     f.write(result_text)
 
     def extract_metadata(self):
         if (len(self.text) <= 0):
