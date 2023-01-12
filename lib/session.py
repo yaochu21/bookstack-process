@@ -10,9 +10,10 @@ class Subtitle:
         self.level = level
         self.s = start_index
         self.e = end_index
-    
+        self.valid = True
+
     def to_dict(self):
-        return {"text":self.text,"level":self.level,"s":self.s,"e":self.e}
+        return {"text":self.text,"level":self.level,"s":self.s,"e":self.e,"valid":self.valid}
 
 # a class to keep context related to a single processing session
 class Pipe:
@@ -93,7 +94,7 @@ class Pipe:
                 self.subtitles.append(subtitle)
         
     def title_length_rule(self,line,thresh=15):
-        return len(line) <= thresh
+        return (len(line) <= thresh) and (len(line) > 0)
 
     def title_prefix_rule(self,line):
         prefix_patterns = [r'^[A-Z][.,、，]',
@@ -112,7 +113,7 @@ class Pipe:
 
     def get_dict_data(self):
         sorted_subtitles_dict =[subtitle.to_dict() for subtitle in sorted(self.subtitles,key=lambda sub: sub.s,reverse=False)]
-        data = {"url":self.url,"text":self.text,"author":self.author,"tags":self.tags,"title":self.title,"subtitles":sorted_subtitles_dict}
+        data = {"url":self.url,"text":self.text,"author":self.author,"date":self.date,"tags":self.tags,"title":self.title,"subtitles":sorted_subtitles_dict}
         return data
 
     def get_json_data(self):
