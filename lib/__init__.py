@@ -31,6 +31,9 @@ def extract(input):
     pipe_data = pipe.get_dict_data()
     return pipe_data
 
+def publish(url,data):
+    pass
+
 if __name__ == "__main__":
     urls = [
         "http://www.stats.gov.cn/tjsj/zxfb./202204/t20220429_1830126.html",
@@ -46,3 +49,4 @@ if __name__ == "__main__":
 
     with open("test/pipe.json", "w") as f:
         f.write(pipe_data)
+
