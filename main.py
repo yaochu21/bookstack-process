@@ -25,6 +25,6 @@ async def process(input: Input):
     if not input.url:
         raise HTTPException(status_code=400, detail="Missing url")
     try:
-        return publish(input.url,input.data)
+        return publish(input.data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,4 +1,5 @@
-from .session import Pipe
+# from .session import Pipe
+from session import Pipe
 from .bookstack_request import BookstackRequest
 from .utils import validate
 
@@ -29,26 +30,18 @@ def extract(input):
         pipe.identify_non_formatted_titles()
     except Exception as e:
         raise ValueError("Failed to identify titles: " + str(e))
+    try:
+        pipe.define_segments()
+        print(pipe.segments)
+    except Exception as e:
+        raise ValueError("Failed to define segments: " + str(e))
     pipe_data = pipe.get_dict_data()
     return pipe_data
 
-def publish(url,data):
-    request = BookstackRequest(url,data)
+def publish(data):
+    request = BookstackRequest(data)
     # format subtitles
     pass
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 if __name__ == "__main__":
     urls = [
@@ -61,7 +54,7 @@ if __name__ == "__main__":
         "https://archive.vn/0gYCh",
     ]
 
-    pipe_data = extract(urls[0])
+    pipe_data = extract(urls[2])
 
     with open("test/pipe.json", "w") as f:
         f.write(pipe_data)

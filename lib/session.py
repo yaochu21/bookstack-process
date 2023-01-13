@@ -2,18 +2,32 @@ import requests
 import trafilatura as tra
 import json
 import re
+from enum import Enum
+
+
+class SegmentType(Enum):
+    BODY = 1
+    SUBTITLE = 2
+    IMAGE = 3
+    TABLE = 4
+
+class Segment:
+    def __init__(self,string,start,end,type) -> None:
+        self.string = string
+        self.s = start
+        self.e = end
+        self.type = type
 
 # a class to keep information related to a subtitle
-class Subtitle:
-    def __init__(self,text,level,start_index,end_index):
+class Subtitle(Segment):
+    def __init__(self,text,level,start_index,end_index,string):
         self.text = text
         self.level = level
-        self.s = start_index
-        self.e = end_index
         self.valid = True
+        Segment.__init__(self,string,start_index,end_index,SegmentType.SUBTITLE)
 
     def to_dict(self):
-        return {"text":self.text,"level":self.level,"s":self.s,"e":self.e,"valid":self.valid}
+        return {"text":self.text,"level":self.level,"s":self.s,"e":self.e,"valid":self.valid,"order":self.order}
 
 # a class to keep context related to a single processing session
 class Pipe:
@@ -25,6 +39,8 @@ class Pipe:
         self.tags = []      # a list of tags
         self.title = ""     # the main title of the article
         self.subtitles = [] # a list of Subtitle objects
+
+        self.segments = []
 
     # use trafilatura to extract main portion of the article into xml-formatted string
     def extract_main(self,include_tables=True,include_imgs=True):
@@ -77,7 +93,7 @@ class Pipe:
         for i,s in enumerate(["h1","h2","h3","hi"]):
             pattern = re.compile(r'<%s.*>(.*?)</%s>' % (s,s))
             for matchobj in re.finditer(pattern,self.text):
-                subtitle = Subtitle(matchobj.group(1),i+1,matchobj.start(),matchobj.end())
+                subtitle = Subtitle(matchobj.group(1),i+1,matchobj.start(),matchobj.end(),matchobj.group(0))
                 self.subtitles.append(subtitle)
         
     def identify_non_formatted_titles(self,ruleset=[]):
@@ -90,7 +106,7 @@ class Pipe:
         for match in re.finditer(pattern,self.text):
             line = match.group(1)
             if any([rule(line) for rule in ruleset]):
-                subtitle = Subtitle(line,5,match.start(),match.end())
+                subtitle = Subtitle(line,5,match.start(),match.end(),match.group(0))
                 self.subtitles.append(subtitle)
         
     def title_length_rule(self,line,thresh=15):
@@ -110,6 +126,24 @@ class Pipe:
             if (match != None):
                 return True
         return False
+
+    # break the html into defined segments of pure texts, tables, images, and subtitles
+    def define_segments(self):
+        segments = [].extend(self.subtitles)
+        
+        pattern = re.compile(r'<table.*?</table>')
+        for matchobj in re.finditer(pattern,self.text):
+            new_segment = Segment(matchobj.group(0),matchobj.start(),matchobj.end(),SegmentType.TABLE)
+            segments.append(new_segment)
+        
+        pattern = re.compile(r'<img.*?</img>')
+        for matchobj in re.finditer(pattern,self.text):
+            new_segment = Segment(matchobj.group(0),matchobj.start(),matchobj.end(),SegmentType.IMAGE)
+            segments.append(new_segment)
+
+        self.segments = segments
+
+        pass
 
     def get_dict_data(self):
         sorted_subtitles_dict =[subtitle.to_dict() for subtitle in sorted(self.subtitles,key=lambda sub: sub.s,reverse=False)]
