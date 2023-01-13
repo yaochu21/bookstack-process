@@ -20,7 +20,7 @@ class Pipe:
     def __init__(self,url):
         self.url = url
         self.text = ""      # xml text string representing the article that is put through stages of formatting
-        self.author = ""      # name of the author, not implemented
+        self.author = ""    # name of the author, not implemented
         self.date = ""      # publication date
         self.tags = []      # a list of tags
         self.title = ""     # the main title of the article

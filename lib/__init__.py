@@ -1,9 +1,10 @@
 from .session import Pipe
+from .bookstack_request import BookstackRequest
 from .utils import validate
 
 def extract(input):
     """
-    Extract the main content of the article and date, tags etc. metadata
+    Extract the main content of the article, metadata, and subtitles
     """
     url = validate(input)
     pipe = Pipe(url)
@@ -32,7 +33,22 @@ def extract(input):
     return pipe_data
 
 def publish(url,data):
+    request = BookstackRequest(url,data)
+    # format subtitles
     pass
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == "__main__":
     urls = [
