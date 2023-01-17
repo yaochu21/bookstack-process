@@ -15,36 +15,57 @@ class SegmentType(Enum):
     NONE = 5
 
 class Segment:
-    def __init__(self,string,start,end,tag,type=SegmentType.NONE) -> None:
+    def __init__(self,string,start,end,tag,type=SegmentType.NONE,order=0) -> None:
         self.string = string
         self.s = start
         self.e = end
         self.tag = tag
         self.type = type
-        self.order = 0
+        self.order = order
+
+    def update_tag(self,new_tag):
+        bs = BeautifulSoup(self.string)
+        new_tag_object = bs.new_tag(new_tag)
+        new_tag_object.string = bs.text
+        self.string = str(new_tag_object)
+        self.tag = new_tag
+
+    def get_inner_text(self):
+        bs = BeautifulSoup(self.string)
+        return bs.text
 
     def to_dict(self):
-        return {"string":self.string,"s":self.s,"e":self.e,"type":self.type.name}
+        return {"string":self.string,"s":self.s,"e":self.e,"tag":self.tag,"type":self.type.name,"order":self.order}
 
 # a class to keep information related to a subtitle
-class Subtitle():
-    def __init__(self,text,level,id):
+class Subtitle(Segment):
+    def __init__(self,text,level,segment):
         self.text = text
         self.level = level
         self.valid = True
-        self.s = id
+        super().__init__(segment.string,segment.s,segment.e,segment.tag,SegmentType.SUBTITLE,segment.order)
+
+    def update_string(self):
+        bs = BeautifulSoup(self.string)
+        string_text = bs.text
+        if (string_text != self.text):
+            new_string = "<" + self.tag + ">" + self.text + "</" + self.tag + ">"
+            self.string = new_string
 
     def to_dict(self):
-        return {"text":self.text,"level":self.level,"valid":self.valid,"s":self.s}
+        d = super().to_dict()
+        d.update({"text":self.text,"level":self.level,"valid":self.valid})
+        return d
 
 class Image():
-    def __init__(self,url,id,valid=False):
+    def __init__(self,url,id,valid):
         self.url = url
         self.valid = valid
         self.id = id
+        self.order = 0
 
     def to_dict(self):
-        return {"url":self.url,"valid":self.valid,"id":self.id}
+        return {"url":self.url,"valid":self.valid,"id":self.id,"order":self.order}
 
 # a class to keep context related to a single processing session
 class Pipe:
@@ -58,7 +79,6 @@ class Pipe:
         self.date = ""      # publication date
         self.tags = []      # a list of tags
         self.title = ""     # the main title of the article
-        self.subtitles = [] # a list of Subtitle objects
 
         self.imgs = []
         self.segments = []
@@ -113,9 +133,11 @@ class Pipe:
         self.segments = sorted(self.segments,key=lambda seg: seg.s)
 
         last_seg = self.segments[0]
+        last_seg.order = 0
         new_segments = [last_seg]
         for i in range(1,len(self.segments)):
             curr_seg = self.segments[i]
+            curr_seg.order = i * 100
             if (curr_seg.e < last_seg.e):
                 continue
             if (curr_seg.s < last_seg.e):
@@ -163,7 +185,7 @@ class Pipe:
         ruleset = []
         ruleset.extend([lambda x: (self.title_length_rule(x)),lambda x: (self.title_prefix_rule(x))])
 
-        for segment in self.segments:
+        for i,segment in enumerate(self.segments):
             if (segment.type not in [SegmentType.BODY,SegmentType.SUBTITLE]):
                 continue
 
@@ -175,22 +197,24 @@ class Pipe:
             clean_text = bs.text
 
             if (segment.type == SegmentType.SUBTITLE):
-                self.subtitles.append(Subtitle(clean_text,1,segment.s))
+                self.segments[i] = Subtitle(clean_text,1,segment)
+                # self.subtitles.append(Subtitle(clean_text,1,segment))
+
             elif (segment.type == SegmentType.BODY):
                 if (any([rule(clean_text) for rule in ruleset])):
-                    segment.type = SegmentType.SUBTITLE
-                    self.subtitles.append(Subtitle(clean_text,1,segment.s))
+                    self.segments[i] = Subtitle(clean_text,1,segment)
+                    #self.subtitles.append(Subtitle(clean_text,1,segment.s))
     
     def title_length_rule(self,line,thresh=15):
-        return (len(line) <= thresh) and (len(line) > 3)
+        return (len(line) <= thresh) and (len(line) > 0)
 
     def title_prefix_rule(self,line):
-        prefix_patterns = [r'^[A-Z][.,、，]',
-                           r'^[0-9]+[.,、，]',
-                           r'^\([A-Z]\)[.,、，]*',
-                           r'^\([0-9]+\)[.,、，]*',
-                           r'^[一二三四五六七八九十+][.,、，]',
-                           r'^\([一二三四五六七八九十]+\)[.,、，]*']
+        prefix_patterns = [r'^[A-Z][.,、， ]',
+                           r'^[0-9]+[.,、， ]',
+                           r'^\([A-Z]\)[.,、， ]*',
+                           r'^\([0-9]+\)[.,、， ]*',
+                           r'^[一二三四五六七八九十+][.,、， ]',
+                           r'^\([一二三四五六七八九十]+\)[.,、， ]*']
 
         for prefix_pattern in prefix_patterns:
             pattern = re.compile(prefix_pattern)
@@ -204,13 +228,12 @@ class Pipe:
         for i,img in enumerate(imgs):
             url = img['src']
             url = urljoin(self.url,url)
-            self.imgs.append(Image(url,i))
+            self.imgs.append(Image(url,i,False))
 
     def get_dict_data(self):
-        sorted_subtitles_dict =[subtitle.to_dict() for subtitle in self.subtitles]
         sorted_segments_dict = [segment.to_dict() for segment in self.segments]
         sorted_imgs_dict = [img.to_dict() for img in self.imgs]
-        data = {"url":self.url,"text":self.text,"author":self.author,"date":self.date,"tags":self.tags,"title":self.title,"imgs":sorted_imgs_dict,"subtitles":sorted_subtitles_dict,"segments":sorted_segments_dict}
+        data = {"url":self.url,"text":self.text,"author":self.author,"date":self.date,"tags":self.tags,"title":self.title,"imgs":sorted_imgs_dict,"segments":sorted_segments_dict}
         return data
 
     def get_json_data(self):
