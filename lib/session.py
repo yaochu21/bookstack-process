@@ -28,13 +28,23 @@ class Segment:
 
 # a class to keep information related to a subtitle
 class Subtitle():
-    def __init__(self,text,level):
+    def __init__(self,text,level,id):
         self.text = text
         self.level = level
         self.valid = True
+        self.s = id
 
     def to_dict(self):
-        return {"text":self.text,"level":self.level,"valid":self.valid}
+        return {"text":self.text,"level":self.level,"valid":self.valid,"s":self.s}
+
+class Image():
+    def __init__(self,url,id,valid=True):
+        self.url = url
+        self.valid = valid
+        self.id = id
+
+    def to_dict(self):
+        return {"url":self.url,"valid":self.valid,"id":self.id}
 
 # a class to keep context related to a single processing session
 class Pipe:
@@ -50,7 +60,7 @@ class Pipe:
         self.title = ""     # the main title of the article
         self.subtitles = [] # a list of Subtitle objects
 
-        self.img_urls = []
+        self.imgs = []
         self.segments = []
 
     # use trafilatura to extract main portion of the article into xml-formatted string
@@ -165,11 +175,11 @@ class Pipe:
             clean_text = bs.text
 
             if (segment.type == SegmentType.SUBTITLE):
-                self.subtitles.append(Subtitle(clean_text,1))
+                self.subtitles.append(Subtitle(clean_text,1,segment.s))
             elif (segment.type == SegmentType.BODY):
                 if (any([rule(clean_text) for rule in ruleset])):
                     segment.type = SegmentType.SUBTITLE
-                    self.subtitles.append(Subtitle(clean_text,2))
+                    self.subtitles.append(Subtitle(clean_text,segment.s))
     
     def title_length_rule(self,line,thresh=15):
         return (len(line) <= thresh) and (len(line) > 3)
@@ -189,18 +199,18 @@ class Pipe:
                 return True
         return False
 
-    def extract_images(self,surround_range=20):
+    def extract_images(self):
         imgs = self.bs4.find_all('img')
-        for img in imgs:
+        for i,img in enumerate(imgs):
             url = img['src']
             url = urljoin(self.url,url)
-            self.img_urls.append(url)
-        pass
+            self.imgs.append(Image(url,i))
 
     def get_dict_data(self):
         sorted_subtitles_dict =[subtitle.to_dict() for subtitle in self.subtitles]
         sorted_segments_dict = [segment.seg_to_dict() for segment in self.segments]
-        data = {"url":self.url,"text":self.text,"author":self.author,"date":self.date,"tags":self.tags,"title":self.title,"img_urls":self.img_urls,"subtitles":sorted_subtitles_dict,"segments":sorted_segments_dict}
+        sorted_imgs_dict = [img.img_to_dict() for img in self.imgs]
+        data = {"url":self.url,"text":self.text,"author":self.author,"date":self.date,"tags":self.tags,"title":self.title,"imgs":sorted_imgs_dict,"subtitles":sorted_subtitles_dict,"segments":sorted_segments_dict}
         return data
 
     def get_json_data(self):

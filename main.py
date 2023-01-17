@@ -4,6 +4,7 @@ from lib import extract,publish
 
 class Input(BaseModel):
     url: str
+    data: object
 
 app = FastAPI()
 
@@ -22,8 +23,8 @@ async def process(input: Input):
 
 @app.post("/publish/")
 async def process(input: Input):
-    if not input.url:
-        raise HTTPException(status_code=400, detail="Missing url")
+    if not input.data:
+        raise HTTPException(status_code=400, detail="Missing data")
     try:
         return publish(input.data)
     except Exception as e:
