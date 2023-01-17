@@ -23,7 +23,7 @@ class Segment:
         self.type = type
         self.order = 0
 
-    def seg_to_dict(self):
+    def to_dict(self):
         return {"string":self.string,"s":self.s,"e":self.e,"type":self.type.name}
 
 # a class to keep information related to a subtitle
@@ -38,7 +38,7 @@ class Subtitle():
         return {"text":self.text,"level":self.level,"valid":self.valid,"s":self.s}
 
 class Image():
-    def __init__(self,url,id,valid=True):
+    def __init__(self,url,id,valid=False):
         self.url = url
         self.valid = valid
         self.id = id
@@ -179,7 +179,7 @@ class Pipe:
             elif (segment.type == SegmentType.BODY):
                 if (any([rule(clean_text) for rule in ruleset])):
                     segment.type = SegmentType.SUBTITLE
-                    self.subtitles.append(Subtitle(clean_text,segment.s))
+                    self.subtitles.append(Subtitle(clean_text,1,segment.s))
     
     def title_length_rule(self,line,thresh=15):
         return (len(line) <= thresh) and (len(line) > 3)
@@ -208,8 +208,8 @@ class Pipe:
 
     def get_dict_data(self):
         sorted_subtitles_dict =[subtitle.to_dict() for subtitle in self.subtitles]
-        sorted_segments_dict = [segment.seg_to_dict() for segment in self.segments]
-        sorted_imgs_dict = [img.img_to_dict() for img in self.imgs]
+        sorted_segments_dict = [segment.to_dict() for segment in self.segments]
+        sorted_imgs_dict = [img.to_dict() for img in self.imgs]
         data = {"url":self.url,"text":self.text,"author":self.author,"date":self.date,"tags":self.tags,"title":self.title,"imgs":sorted_imgs_dict,"subtitles":sorted_subtitles_dict,"segments":sorted_segments_dict}
         return data
 
