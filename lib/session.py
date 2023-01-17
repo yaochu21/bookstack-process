@@ -4,18 +4,22 @@ import json
 import re
 from enum import Enum
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 
+# used for debugging
 class SegmentType(Enum):
     BODY = 1
     SUBTITLE = 2
     IMAGE = 3
     TABLE = 4
+    NONE = 5
 
 class Segment:
-    def __init__(self,string,start,end,type) -> None:
+    def __init__(self,string,start,end,tag,type=SegmentType.NONE) -> None:
         self.string = string
         self.s = start
         self.e = end
+        self.tag = tag
         self.type = type
         self.order = 0
 
@@ -23,15 +27,14 @@ class Segment:
         return {"string":self.string,"s":self.s,"e":self.e,"type":self.type.name}
 
 # a class to keep information related to a subtitle
-class Subtitle(Segment):
-    def __init__(self,text,level,start_index,end_index,string):
+class Subtitle():
+    def __init__(self,text,level):
         self.text = text
         self.level = level
         self.valid = True
-        Segment.__init__(self,string,start_index,end_index,SegmentType.SUBTITLE)
 
     def to_dict(self):
-        return {"text":self.text,"level":self.level,"s":self.s,"e":self.e,"valid":self.valid,"string":self.string}
+        return {"text":self.text,"level":self.level,"valid":self.valid}
 
 # a class to keep context related to a single processing session
 class Pipe:
@@ -47,16 +50,18 @@ class Pipe:
         self.title = ""     # the main title of the article
         self.subtitles = [] # a list of Subtitle objects
 
+        self.img_urls = []
         self.segments = []
 
     # use trafilatura to extract main portion of the article into xml-formatted string
     def extract_main(self,include_tables=True,include_imgs=False):
         fetched = tra.fetch_url(self.url)
         if (fetched == None):
-            print("failed to fetch")
-            return
+            raise Exception("tra failed to fetch")
         result_text = tra.extract(fetched,output_format="xml",include_formatting=True,include_images=include_imgs,include_tables=include_tables)
         self.text = result_text
+        print(self.text)
+        print("----------")
 
         page = requests.get(self.url)
         page.encoding = 'utf-8'
@@ -65,75 +70,109 @@ class Pipe:
         self.bs4 = BeautifulSoup(self.raw, "html.parser")
 
     def extract_metadata(self):
-        if (len(self.text) <= 0):
-            print("no text to to process")
-            return
         pattern = re.compile(r'<doc.*title="(.*?)".*date="(.*?)".*tags="(.*?)".*>')
         match_obj = re.search(pattern,self.text)
         self.title,self.date,self.tags = match_obj.group(1),match_obj.group(2),match_obj.group(3).split(',')
 
         print([self.tags,self.date,self.title])
 
-    def extract_images(self,surround_range=20):
-        if (len(self.text) <= 0):
-            print("no text to to process")
-            return
-        pattern = re.compile(r'(<)(%s)(.*>)' % "img")
-        for matchobj in re.finditer(pattern,self.raw):
-            
+    # break the html into defined segments of pure texts, tables, images, and subtitles
+    def define_segments(self):
+        patterns = []
+        tags = ['img','table','hi','h1','h2','h3','p']
+        for tag in tags:
+            patterns.append(re.compile(r'<%s.*?>(.*?)</%s>' % (tag,tag)))
 
-            new_segment = Segment(matchobj.group(0),matchobj.start(),matchobj.end(),SegmentType.IMAGE)
+        for pattern,tag in zip(patterns,tags):
+            objs = re.finditer(pattern,self.text)
+            seg_type = SegmentType.NONE
+            if (tag == 'p'):
+                seg_type = SegmentType.BODY
+            elif (tag == 'img'):
+                seg_type = SegmentType.IMAGE
+            elif (tag == 'table'):
+                seg_type = SegmentType.TABLE
+            elif (tag in ['hi','h1','h2','h3']):
+                seg_type = SegmentType.SUBTITLE
 
-        pass
+            for obj in objs:
+                if (not self.search_segment_range(obj.start(),obj.end())):
+                    continue
+                self.segments.append(Segment(obj.group(0),obj.start(),obj.end(),tag,seg_type))
 
-    def format_images(self,img_tag="graphic"):
-        if (len(self.text) <= 0):
-            print("no text to to process")
-            return
-        pattern = re.compile(r'(<)(%s)(.*>)' % img_tag)
-        repl = lambda matchobj: matchobj.group(1) + "img" + matchobj.group(3)
-        self.text = re.sub(pattern,repl,self.text)
+        self.segments = sorted(self.segments,key=lambda seg: seg.s)
 
-    def format_tables(self):
-        if (len(self.text) <= 0):
-            print("no text to to process")
-            return
+        last_seg = self.segments[0]
+        new_segments = [last_seg]
+        for i in range(1,len(self.segments)):
+            curr_seg = self.segments[i]
+            if (curr_seg.e < last_seg.e):
+                continue
+            if (curr_seg.s < last_seg.e):
+                raise Exception("error parsing segment order")
+            new_segments.append(curr_seg)
+            last_seg = curr_seg
+        self.segments = new_segments
+
+        # print("validate seg partition:" + str(self.validate_segment_partition()))
+
+    def search_segment_range(self,start,end):
+        for segment in self.segments:
+            if (start >= segment.s and end <= segment.e):
+                return False
+        return True
+
+    def validate_segment_partition(self):
+        last_seg = self.segments[0]
+        for i in range(1,len(self.segments)):
+            curr_seg = self.segments[i]
+            if (curr_seg.s == last_seg.e):
+                last_seg = curr_seg
+                continue
+            print(i)
+            print(curr_seg.s)
+            print(last_seg.e)
+            return False
+        return True
+
+    def format_tables(self): 
         pattern = re.compile(r'<table.*?</table>')
         tables_page = re.findall(pattern,self.raw)
-        tables_xml = re.findall(pattern,self.text)
 
-        for i,table in enumerate(tables_xml):
+        i = 0
+        for segment in self.segments:
+            if (segment.type != SegmentType.TABLE):
+                continue
             if (i >= len(tables_page)):
                 break
-            self.text = self.text.replace(table,tables_page[i])
+            segment.string = tables_page[i]
+            segment.e = segment.s + len(segment.string)
+            i += 1
 
-    def identify_formatted_titles(self):
-        if (len(self.text) <= 0):
-            print("no text to to process")
-            return
-        for i,s in enumerate(["h1","h2","h3","hi"]):
-            pattern = re.compile(r'<%s.*>(.*?)</%s>' % (s,s))
-            for matchobj in re.finditer(pattern,self.text):
-                subtitle = Subtitle(matchobj.group(1),i+1,matchobj.start(),matchobj.end(),matchobj.group(0))
-                self.subtitles.append(subtitle)
-        
-    def identify_non_formatted_titles(self,ruleset=[]):
-        if (len(self.text) <= 0):
-            print("no text to to process")
-            return
-        ruleset.extend([lambda x: (self.title_length_rule(x))])
-        pattern = re.compile(r'<p.*>(.*?)</p>')
+    def identify_subtitles(self,ruleset=[]):
+        ruleset = []
+        ruleset.extend([lambda x: (self.title_length_rule(x)),lambda x: (self.title_prefix_rule(x))])
 
-        for match in re.finditer(pattern,self.text):
-            line = match.group(1)
-            if any([rule(line) for rule in ruleset]):
-                subtitle = Subtitle(line,5,match.start(),match.end(),match.group(0))
-                self.subtitles.append(subtitle)
+        for segment in self.segments:
+            if (segment.type not in [SegmentType.BODY,SegmentType.SUBTITLE]):
+                continue
 
-        print(self.subtitles)
-        
+            # pattern = re.compile(r'<%s.*?>(.*?)</%s>' % (segment.tag,segment.tag))
+            # match = re.search(pattern,segment.string)
+            # clean_text = match.group(1)
+
+            bs = BeautifulSoup(segment.string,"html.parser")
+            clean_text = bs.text
+
+            if (segment.type == SegmentType.SUBTITLE):
+                self.subtitles.append(Subtitle(clean_text,1))
+            elif (segment.type == SegmentType.BODY):
+                if (any([rule(clean_text) for rule in ruleset])):
+                    segment.type = SegmentType.SUBTITLE
+                    self.subtitles.append(Subtitle(clean_text,2))
+    
     def title_length_rule(self,line,thresh=15):
-        return (len(line) <= thresh) and (len(line) > 0)
+        return (len(line) <= thresh) and (len(line) > 3)
 
     def title_prefix_rule(self,line):
         prefix_patterns = [r'^[A-Z][.,、，]',
@@ -150,27 +189,18 @@ class Pipe:
                 return True
         return False
 
-    # break the html into defined segments of pure texts, tables, images, and subtitles
-    def define_segments(self):
-        segments = [] + self.subtitles
-        
-        pattern = re.compile(r'<table.*?</table>')
-        for matchobj in re.finditer(pattern,self.text):
-            new_segment = Segment(matchobj.group(0),matchobj.start(),matchobj.end(),SegmentType.TABLE)
-            segments.append(new_segment)
-        
-        pattern = re.compile(r'<img.*?</img>')
-        for matchobj in re.finditer(pattern,self.text):
-            new_segment = Segment(matchobj.group(0),matchobj.start(),matchobj.end(),SegmentType.IMAGE)
-            segments.append(new_segment)
-        self.segments = segments
-
+    def extract_images(self,surround_range=20):
+        imgs = self.bs4.find_all('img')
+        for img in imgs:
+            url = img['src']
+            url = urljoin(self.url,url)
+            self.img_urls.append(url)
         pass
 
     def get_dict_data(self):
-        sorted_subtitles_dict =[subtitle.to_dict() for subtitle in sorted(self.subtitles,key=lambda sub: sub.s,reverse=False)]
-        sorted_segments_dict = [segment.seg_to_dict() for segment in sorted(self.segments,key=lambda sub: sub.s,reverse=False)]
-        data = {"url":self.url,"text":self.text,"author":self.author,"date":self.date,"tags":self.tags,"title":self.title,"subtitles":sorted_subtitles_dict,"segments":sorted_segments_dict}
+        sorted_subtitles_dict =[subtitle.to_dict() for subtitle in self.subtitles]
+        sorted_segments_dict = [segment.seg_to_dict() for segment in self.segments]
+        data = {"url":self.url,"text":self.text,"author":self.author,"date":self.date,"tags":self.tags,"title":self.title,"img_urls":self.img_urls,"subtitles":sorted_subtitles_dict,"segments":sorted_segments_dict}
         return data
 
     def get_json_data(self):

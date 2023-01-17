@@ -21,25 +21,23 @@ def extract(input):
         pipe.extract_metadata()
     except Exception as e:
         raise ValueError("Failed to extract metadata: " + str(e))
-    # try:
-    #     pipe.format_images()
-    # except Exception as e:
-    #     raise ValueError("Failed to format images: " + str(e))
+    try:
+        pipe.define_segments()
+    except Exception as e:
+        raise ValueError("Failed to define segments: " + str(e))
     try:
         pipe.format_tables()
     except Exception as e:
         raise ValueError("Failed to format tables: " + str(e))
     try:
-        pipe.identify_formatted_titles()
-        pipe.identify_non_formatted_titles()
+        pipe.identify_subtitles()
     except Exception as e:
         raise ValueError("Failed to identify titles: " + str(e))
     try:
-        pipe.define_segments()
+        pipe.extract_images()
     except Exception as e:
-        raise ValueError("Failed to define segments: " + str(e))
-
-    print(pipe.text)
+        raise ValueError("Failed to extract images: " + str(e))
+    
     pipe_data = pipe.get_dict_data()
     return pipe_data
 
@@ -59,7 +57,7 @@ if __name__ == "__main__":
         "https://archive.vn/0gYCh",
     ]
 
-    pipe_data = extract(urls[1])
+    pipe_data = extract(urls[2])
 
     with open("../test/pipe.json", "w", encoding='utf-8') as f:
         f.write(json.dumps(pipe_data,ensure_ascii=False))
