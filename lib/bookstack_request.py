@@ -1,5 +1,7 @@
 import requests
 import json
+from bs4 import BeautifulSoup
+from .session import Segment,SegmentType,Image,Subtitle
 
 # incomplete & deprecated, this request should be handled by the client side
 class BookstackRequest:
@@ -13,14 +15,26 @@ class BookstackRequest:
         self.rtype = data_dict['rtype']
         self.keywords = data_dict['tags']
 
-        self.subtitles = data_dict['subtitles']
+        self.imgs = data_dict['imgs']
+        self.segments = data_dict['segments']
 
         self.api_url = "https://report.laodongqushi.com/api/pages"
         self.posted_id = None
 
+        self.final_body = ""
+
+    def process_images(self):
+        # map images to segments
+        # add to list of segments
+        pass
 
     def format_subtitles(self):
+        # for each subtitle segment, edit tag/html string according to level
+        pass
 
+    def stich_segments(self):
+        # join segments into string
+        # make html string with bs4
         pass
 
     def post_body(self):

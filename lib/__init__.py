@@ -1,10 +1,10 @@
 from .session import Pipe
 from .bookstack_request import BookstackRequest
 from .utils import validate
-
 # from session import Pipe
 # from bookstack_request import BookstackRequest
 # from utils import validate
+
 import json
 
 def extract(input):
