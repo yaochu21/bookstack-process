@@ -1,9 +1,15 @@
-from .session import Pipe
-from .utils import validate
+# from .session import Pipe
+# from .bookstack_request import BookstackRequest
+# from .utils import validate
+
+from session import Pipe
+from bookstack_request import BookstackRequest
+from utils import validate
+import json
 
 def extract(input):
     """
-    Extract the main content of the article and date, tags etc. metadata
+    Extract the main content of the article, metadata, and subtitles
     """
     url = validate(input)
     pipe = Pipe(url)
@@ -16,20 +22,29 @@ def extract(input):
     except Exception as e:
         raise ValueError("Failed to extract metadata: " + str(e))
     try:
-        pipe.format_images()
+        pipe.define_segments()
     except Exception as e:
-        raise ValueError("Failed to format images: " + str(e))
+        raise ValueError("Failed to define segments: " + str(e))
     try:
         pipe.format_tables()
     except Exception as e:
         raise ValueError("Failed to format tables: " + str(e))
     try:
-        pipe.identify_formatted_titles()
-        pipe.identify_non_formatted_titles()
+        pipe.identify_subtitles()
     except Exception as e:
         raise ValueError("Failed to identify titles: " + str(e))
+    try:
+        pipe.extract_images()
+    except Exception as e:
+        raise ValueError("Failed to extract images: " + str(e))
+    
     pipe_data = pipe.get_dict_data()
     return pipe_data
+
+def publish(data):
+    request = BookstackRequest(data)
+    # format subtitles
+    pass
 
 if __name__ == "__main__":
     urls = [
@@ -42,7 +57,8 @@ if __name__ == "__main__":
         "https://archive.vn/0gYCh",
     ]
 
-    pipe_data = extract(urls[0])
+    pipe_data = extract(urls[2])
 
-    with open("test/pipe.json", "w") as f:
-        f.write(pipe_data)
+    with open("../test/pipe.json", "w", encoding='utf-8') as f:
+        f.write(json.dumps(pipe_data,ensure_ascii=False))
+
