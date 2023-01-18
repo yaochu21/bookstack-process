@@ -3,7 +3,6 @@ from pydantic import BaseModel
 from lib import extract,publish
 from fastapi.middleware.cors import CORSMiddleware
 
-
 class Input(BaseModel):
     url: str
     data: object
