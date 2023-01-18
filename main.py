@@ -1,12 +1,22 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from lib import extract,publish
+from fastapi.middleware.cors import CORSMiddleware
+
 
 class Input(BaseModel):
     url: str
     data: object
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():
