@@ -42,9 +42,27 @@ def extract(input):
     return pipe_data
 
 def generate(data):
-    # request = BookstackRequest(data)
-    # format subtitles
-    print(data)
+    request = BookstackRequest(data)
+    try:
+        request.convert_segments()
+    except Exception as e:
+        raise ValueError("Failed to convert segments: " + str(e))
+    try:
+        request.process_images()
+    except Exception as e:
+        raise ValueError("Failed to process images: " + str(e))
+    try:
+        request.stich_segments()
+    except Exception as e:
+        raise ValueError("Failed to stich segments: " + str(e))
+    try:
+        request.post()
+    except Exception as e:
+        raise ValueError("Failed to post: " + str(e))
+    try:
+        request.post_attachments()
+    except Exception as e:
+        raise ValueError("Failed to post attachments: " + str(e))
     return "None"
 
 if __name__ == "__main__":
@@ -66,8 +84,14 @@ if __name__ == "__main__":
     data = {}
     with open("../test/result.json",'r') as f:
         data = json.load(f)
-
-    print(data)
     
-    req = BookstackRequest(data)
+    req = BookstackRequest(json.dumps(data))
+    req.convert_segments()
+    req.process_images()
+    req.stich_segments()
+    req.post()
 
+    print(req.post_return)
+
+    with open('../test/body.txt','w') as f:
+        f.write(req.final_body)

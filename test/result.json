@@ -13,54 +13,6 @@
     "title": "2022届毕业生求职报告：00后来了",
     "imgs": [
         {
-            "url": "https://pic2.pedaily.cn/23/202301/20230105@607801.gif",
-            "valid": false,
-            "id": 0,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/21/202109/20210908@485080.png",
-            "valid": false,
-            "id": 1,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/21/202109/20210908@485081.png",
-            "valid": false,
-            "id": 2,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/21/202109/20210908@485082.png",
-            "valid": false,
-            "id": 3,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/21/202109/20210908@485083.png",
-            "valid": false,
-            "id": 4,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/21/202109/20210908@485084.png",
-            "valid": false,
-            "id": 5,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/201612/20161205@167408.png",
-            "valid": false,
-            "id": 6,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/22/202212/20221221@603293.png",
-            "valid": false,
-            "id": 7,
-            "order": 0
-        },
-        {
             "url": "https://pic2.pedaily.cn/22/202209/2022951740569284.jpg",
             "valid": true,
             "id": 8,
@@ -70,182 +22,16 @@
             "url": "https://pic2.pedaily.cn/22/202209/2022951740572246.jpg",
             "valid": true,
             "id": 9,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/22/202209/2022951740571979.jpg",
-            "valid": false,
-            "id": 10,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/22/202209/2022951740573582.jpg",
-            "valid": false,
-            "id": 11,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/22/202209/2022951740576706.jpg",
-            "valid": false,
-            "id": 12,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/22/202209/2022951740577707.jpg",
-            "valid": false,
-            "id": 13,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/22/202209/2022951740581230.jpg",
-            "valid": false,
-            "id": 14,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/22/202209/2022951740587011.jpg",
-            "valid": false,
-            "id": 15,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/22/202209/2022951740588641.jpg",
-            "valid": false,
-            "id": 16,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/19/201905/20190506@365417.png",
-            "valid": false,
-            "id": 17,
-            "order": 0
+            "order": 800
         },
         {
             "url": "https://pic2.pedaily.cn/19/201905/20190506@365417.png",
             "valid": false,
             "id": 18,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/19/201905/20190506@365417.png",
-            "valid": false,
-            "id": 19,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/19/201905/20190506@365417.png",
-            "valid": false,
-            "id": 20,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/19/201905/20190506@365417.png",
-            "valid": false,
-            "id": 21,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/19/201905/20190506@365417.png",
-            "valid": false,
-            "id": 22,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/23/202301/20230116235473827382.jpg",
-            "valid": false,
-            "id": 23,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/23/202301/20230116@611039.jpg",
-            "valid": false,
-            "id": 24,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/my21/a87.jpg",
-            "valid": false,
-            "id": 25,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/my21/a106.jpg",
-            "valid": false,
-            "id": 26,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/22/202212/20221202@59818842c600.jpg",
-            "valid": false,
-            "id": 27,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/22/202212/20221229120676037603.jpg",
-            "valid": false,
-            "id": 28,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/21/202110/20211027@494057.jpg",
-            "valid": false,
-            "id": 29,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/21/202110/20211027@494083.jpg",
-            "valid": false,
-            "id": 30,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/20/media/202004/20200410020423.jpg",
-            "valid": false,
-            "id": 31,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/21/202110/20211027@494072.jpg",
-            "valid": false,
-            "id": 32,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/22/202212/20221227@604636.png",
-            "valid": false,
-            "id": 33,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/22/202212/20221227@604637.png",
-            "valid": false,
-            "id": 34,
-            "order": 0
-        },
-        {
-            "url": "https://pic2.pedaily.cn/22/202212/20221227@604638.png",
-            "valid": false,
-            "id": 35,
-            "order": 0
+            "order": 1000
         }
     ],
     "segments": [
-        {
-            "string": "<p>2022年一晃眼又就了九月，黄金求职季“金九银十”正式拉开帷幕，第 二批00后、2023届准毕业生即将迎来进入社会的第 一场考验。</p>",
-            "s": 210,
-            "e": 282,
-            "tag": "p",
-            "type": "BODY",
-            "order": 0
-        },
-        {
-            "string": "<p>“反职场PUA”、“拒绝画饼学”、“可以使唤我，但请你尊重我”、“我不在乎交不交金，但我在乎给多少薪资”……在网友们眼中，相比于80后、90后，00后找工作总带着“勇”，敢于表达和挑战，他们对于职业的选择展现出了强烈的个体意识。</p>",
-            "s": 287,
-            "e": 408,
-            "tag": "p",
-            "type": "BODY",
-            "order": 100
-        },
         {
             "string": "<p>但即使有“转身说不”的勇气，在经历了社会的第 一次“捶打”之后，不少00后毕业生也开始纷纷吐槽“就业难，难于上青天”。身为新晋“社会人” 的00后们开始意识到，进入社会并不像填好志愿等待录取通知那样简单。</p>",
             "s": 413,
@@ -261,33 +47,9 @@
             "tag": "hi",
             "type": "SUBTITLE",
             "order": 300,
-            "text": "“北上广”不再是第 一选择，新一线成毕业生新宠",
+            "text": "全新的标题",
             "level": 1,
             "valid": true
-        },
-        {
-            "string": "<p>毕业之后，是选择留在一线城市独自打拼，还是回去建设家乡？</p>",
-            "s": 593,
-            "e": 628,
-            "tag": "p",
-            "type": "BODY",
-            "order": 400
-        },
-        {
-            "string": "<p>“逃离北上广”的不止摸爬滚打职场十几年的“老油条”。一些00后敏感地意识到，与其在生活成本居高不下的一线城市苦苦挣扎，不如到新一线城市开辟新天地。随着新一线、二线城市的经济发展，就业和生活设施日渐完善，较小的竞争压力和生活成本，不断冒出的发展机会开始吸引越来越多的年轻人。</p>",
-            "s": 633,
-            "e": 776,
-            "tag": "p",
-            "type": "BODY",
-            "order": 500
-        },
-        {
-            "string": "<p>梧桐果的数据显示，相比21届毕业生，更多的22届毕业生选择到新一线、二线和三线城市发展。其中，2022届高校毕业生中，近四成毕业生流向新一线城市。</p>",
-            "s": 781,
-            "e": 861,
-            "tag": "p",
-            "type": "BODY",
-            "order": 600
         },
         {
             "string": "<p>中国青年报社社会调查中心的一项调查也显示，90.5%的受访00后表示在就业或创业时会优先选择青年发展型城市。就业机会（67.0%）、生活成本（65.4%）、经济发展（64.8%）是00后选择未来定居城市时的主要考虑因素。</p>",
@@ -339,76 +101,6 @@
             "tag": "p",
             "type": "BODY",
             "order": 1200
-        },
-        {
-            "string": "<hi rend=\"#b\">“大不了再缓一缓”，更多00后选择“慢就业”</hi>",
-            "s": 1492,
-            "e": 1533,
-            "tag": "hi",
-            "type": "SUBTITLE",
-            "order": 1300,
-            "text": "“大不了再缓一缓”，更多00后选择“慢就业”",
-            "level": 1,
-            "valid": true
-        },
-        {
-            "string": "<p>大厂缩编、面试延期、offer被临时取消……面对2022年就业市场的风云变幻，相比2021届毕业生，更多的2022届毕业生选择放缓脚步，沉淀下来思考自己真正想要什么。</p>",
-            "s": 1547,
-            "e": 1637,
-            "tag": "p",
-            "type": "BODY",
-            "order": 1400
-        },
-        {
-            "string": "<p>智联招聘《2022年大学生就业力调研报告》显示，就业压力、所学专业和经济形势是影响2022年应届生毕业去向的主要因素。</p>",
-            "s": 1642,
-            "e": 1708,
-            "tag": "p",
-            "type": "BODY",
-            "order": 1500
-        },
-        {
-            "string": "<p>毕业后选择自由职业和“慢就业”的2022届应届生数量明显增加，50.4%的2022届高校毕业生中选择单位就业，比去年下降6个百分点，而自由职业（18.6%）、慢就业（15.9%）的比例均较去年提高约3个百分点。</p>",
-            "s": 1713,
-            "e": 1825,
-            "tag": "p",
-            "type": "BODY",
-            "order": 1600
-        },
-        {
-            "string": "<hi rend=\"#b\">00后找工作更求稳</hi>",
-            "s": 1840,
-            "e": 1868,
-            "tag": "hi",
-            "type": "SUBTITLE",
-            "order": 1700,
-            "text": "00后找工作更求稳",
-            "level": 1,
-            "valid": true
-        },
-        {
-            "string": "<p>时代的一粒尘，落在个体身上，就成了一座沉重的大山。疫情带来了诸多的不确定性，“求稳”成为*批00后毕业生找工作的主基调。58同城和赶集直招联合发布的《2022年毕业季调研分析报告》显示，疫情之下，51%的毕业生倾向于选择更加稳定的工作。</p>",
-            "s": 1882,
-            "e": 2007,
-            "tag": "p",
-            "type": "BODY",
-            "order": 1800
-        },
-        {
-            "string": "<p>从单位性质来看，更稳定的国有企业是2022届毕业生们的最 优先选择。《2022应届大学毕业生就业数据报告》调研报告显示，超4成的毕业生倾向于毕业后进入国企。</p>",
-            "s": 2012,
-            "e": 2097,
-            "tag": "p",
-            "type": "BODY",
-            "order": 1900
-        },
-        {
-            "string": "<p>【本文由投资界合作伙伴时代数据授权发布，本平台仅提供信息存储服务。】如有任何疑问，请联系（editor@zero2ipo.com.cn）投资界处理。</p>",
-            "s": 2102,
-            "e": 2183,
-            "tag": "p",
-            "type": "BODY",
-            "order": 2000
         }
     ],
     "rtype": [
