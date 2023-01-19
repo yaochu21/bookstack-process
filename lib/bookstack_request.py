@@ -1,12 +1,13 @@
 import requests
 import json
 from bs4 import BeautifulSoup
+# from session import Segment,SegmentType,Image,Subtitle
 from .session import Segment,SegmentType,Image,Subtitle
 
 # incomplete & deprecated, this request should be handled by the client side
 class BookstackRequest:
-    def __init__(self,data):
-        data_dict = json.loads(data)
+    def __init__(self,data_dict):
+        # data_dict = json.loads(data)
         self.html = data_dict['text']
         self.title = data_dict['title']
         self.year = data_dict['date']
@@ -24,6 +25,11 @@ class BookstackRequest:
         self.final_body = ""
 
     def process_images(self):
+        for img in self.imgs:
+            if (not img['valid']):
+                continue
+            imgString = "<img src=" + img['src'] + " />"
+
         # map images to segments
         # add to list of segments
         pass

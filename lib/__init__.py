@@ -1,9 +1,9 @@
-from .session import Pipe
-from .bookstack_request import BookstackRequest
-from .utils import validate
-# from session import Pipe
-# from bookstack_request import BookstackRequest
-# from utils import validate
+# from .session import Pipe
+# from .bookstack_request import BookstackRequest
+# from .utils import validate
+from session import Pipe
+from bookstack_request import BookstackRequest
+from utils import validate
 
 import json
 
@@ -41,24 +41,33 @@ def extract(input):
     pipe_data = pipe.get_dict_data()
     return pipe_data
 
-def publish(data):
-    request = BookstackRequest(data)
+def generate(data):
+    # request = BookstackRequest(data)
     # format subtitles
-    pass
+    print(data)
+    return "None"
 
 if __name__ == "__main__":
-    urls = [
-        "http://www.stats.gov.cn/tjsj/zxfb./202204/t20220429_1830126.html",
-        "http://www.stats.gov.cn/tjsj/zxfb/201901/t20190125_1646796.html",
-        "https://finance.sina.com.cn/china/gncj/2022-06-29/doc-imizirav1142142.shtml",
-        "https://new.qq.com/rain/a/20220616A09TVG00",
-        "https://www.163.com/news/article/H5AEBRQN00019UD6.html",
-        "https://www.jiemian.com/article/7813186.html",
-        "https://archive.vn/0gYCh",
-    ]
+    # urls = [
+    #     "http://www.stats.gov.cn/tjsj/zxfb./202204/t20220429_1830126.html",
+    #     "http://www.stats.gov.cn/tjsj/zxfb/201901/t20190125_1646796.html",
+    #     "https://finance.sina.com.cn/china/gncj/2022-06-29/doc-imizirav1142142.shtml",
+    #     "https://new.qq.com/rain/a/20220616A09TVG00",
+    #     "https://www.163.com/news/article/H5AEBRQN00019UD6.html",
+    #     "https://www.jiemian.com/article/7813186.html",
+    #     "https://archive.vn/0gYCh",
+    # ]
 
-    pipe_data = extract(urls[2])
+    # pipe_data = extract(urls[2])
 
-    with open("../test/pipe.json", "w", encoding='utf-8') as f:
-        f.write(json.dumps(pipe_data,ensure_ascii=False))
+    # with open("../test/pipe.json", "w", encoding='utf-8') as f:
+    #     f.write(json.dumps(pipe_data,ensure_ascii=False))
+
+    data = {}
+    with open("../test/result.json",'r') as f:
+        data = json.load(f)
+
+    print(data)
+    
+    req = BookstackRequest(data)
 

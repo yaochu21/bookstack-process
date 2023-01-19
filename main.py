@@ -1,11 +1,11 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from lib import extract,publish
+from lib import extract,generate
 from fastapi.middleware.cors import CORSMiddleware
 
 class Input(BaseModel):
     url: str
-    data: object
+    data: str
 
 app = FastAPI()
 
@@ -31,10 +31,10 @@ async def process(input: Input):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/publish/")
-async def process(input: Input):
+async def publish(input: Input):
     if not input.data:
         raise HTTPException(status_code=400, detail="Missing data")
     try:
-        return publish(input.data)
+        return generate(input.data)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

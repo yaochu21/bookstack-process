@@ -58,11 +58,11 @@ class Subtitle(Segment):
         return d
 
 class Image():
-    def __init__(self,url,id,valid):
+    def __init__(self,url,id,valid,order=0):
         self.url = url
         self.valid = valid
         self.id = id
-        self.order = 0
+        self.order = order
 
     def to_dict(self):
         return {"url":self.url,"valid":self.valid,"id":self.id,"order":self.order}
