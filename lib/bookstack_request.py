@@ -15,6 +15,7 @@ class BookstackRequest:
         self.authors = data_dict['author']
         self.rtype = data_dict['rtype']
         self.keywords = data_dict['tags']
+        self.book_id = data_dict['book_id']
 
         self.imgs = data_dict['imgs']
         self.segments = data_dict['segments']
@@ -69,10 +70,9 @@ class BookstackRequest:
         tags.extend([{"name":"作者/机构","value":entry} for entry in self.authors])
         tags.extend([{"name":"调查方式","value":entry} for entry in self.rtype])
         tags.extend([{"name":"关键词","value":entry} for entry in self.keywords])
-        book_id = 1
 
         post_data = {
-            "book_id":book_id,
+            "book_id":self.book_id,
             "name":self.title + "-测试页面",
             "html":self.final_body,
             "tags":tags
