@@ -1,9 +1,9 @@
-# from .session import Pipe
-# from .bookstack_request import BookstackRequest
-# from .utils import validate
-from session import Pipe
-from bookstack_request import BookstackRequest
-from utils import validate
+from .session import Pipe
+from .bookstack_request import BookstackRequest
+from .utils import validate
+# from session import Pipe
+# from bookstack_request import BookstackRequest
+# from utils import validate
 
 import json
 
@@ -42,9 +42,9 @@ def extract(input):
     return pipe_data
 
 def generate(data):
-    # request = BookstackRequest(data)
-    # format subtitles
-    print(data)
+    request = BookstackRequest(data)
+    with open("../test/result.json",'w') as f:
+        f.write(data)
     return "None"
 
 if __name__ == "__main__":

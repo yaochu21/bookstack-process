@@ -6,8 +6,8 @@ from .session import Segment,SegmentType,Image,Subtitle
 
 # incomplete & deprecated, this request should be handled by the client side
 class BookstackRequest:
-    def __init__(self,data_dict):
-        # data_dict = json.loads(data)
+    def __init__(self,data):
+        data_dict = json.loads(data)
         self.html = data_dict['text']
         self.title = data_dict['title']
         self.year = data_dict['date']
@@ -29,6 +29,7 @@ class BookstackRequest:
             if (not img['valid']):
                 continue
             imgString = "<img src=" + img['src'] + " />"
+            seg = Segment(imgString,-1,-1,"img",SegmentType.IMAGE,img['order'])
 
         # map images to segments
         # add to list of segments
