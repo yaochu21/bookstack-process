@@ -8,11 +8,11 @@ from urllib.parse import urljoin
 
 # used for debugging
 class SegmentType(Enum):
-    BODY = 1
-    SUBTITLE = 2
-    IMAGE = 3
-    TABLE = 4
-    NONE = 5
+    BODY = 'BODY'
+    SUBTITLE = 'SUBTITLE'
+    IMAGE = 'IMAGE'
+    TABLE = 'TABLE'
+    NONE = 'NONE'
 
 class Segment:
     def __init__(self,string,start,end,tag,type=SegmentType.NONE,order=0) -> None:
@@ -22,13 +22,6 @@ class Segment:
         self.tag = tag
         self.type = type
         self.order = order
-
-    def update_tag(self,new_tag):
-        bs = BeautifulSoup(self.string)
-        new_tag_object = bs.new_tag(new_tag)
-        new_tag_object.string = bs.text
-        self.string = str(new_tag_object)
-        self.tag = new_tag
 
     def get_inner_text(self):
         bs = BeautifulSoup(self.string)
@@ -44,13 +37,6 @@ class Subtitle(Segment):
         self.level = level
         self.valid = True
         super().__init__(segment.string,segment.s,segment.e,segment.tag,SegmentType.SUBTITLE,segment.order)
-
-    def update_string(self):
-        bs = BeautifulSoup(self.string)
-        string_text = bs.text
-        if (string_text != self.text):
-            new_string = "<" + self.tag + ">" + self.text + "</" + self.tag + ">"
-            self.string = new_string
 
     def to_dict(self):
         d = super().to_dict()
@@ -197,12 +183,12 @@ class Pipe:
             clean_text = bs.text
 
             if (segment.type == SegmentType.SUBTITLE):
-                self.segments[i] = Subtitle(clean_text,1,segment)
+                self.segments[i] = Subtitle(clean_text,2,segment)
                 # self.subtitles.append(Subtitle(clean_text,1,segment))
 
             elif (segment.type == SegmentType.BODY):
                 if (any([rule(clean_text) for rule in ruleset])):
-                    self.segments[i] = Subtitle(clean_text,1,segment)
+                    self.segments[i] = Subtitle(clean_text,2,segment)
                     #self.subtitles.append(Subtitle(clean_text,1,segment.s))
     
     def title_length_rule(self,line,thresh=15):
