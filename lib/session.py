@@ -36,6 +36,11 @@ class Segment:
         bs = BeautifulSoup(self.string)
         return bs.text
 
+    def center_segment(self):
+        new_string = "<div style=\"display: flex; text-align:center; margin-left:auto; margin-right:auto; justify-content:center\"> %s </div>" % self.string
+        self.string = new_string
+        
+
     def to_dict(self):
         return {"string":self.string,"s":self.s,"e":self.e,"tag":self.tag,"type":self.type.name,"order":self.order}
 

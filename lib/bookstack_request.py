@@ -42,9 +42,8 @@ class BookstackRequest:
                 segments.append(seg)
             elif (seg_type == SegmentType.TABLE):
                 seg = Segment(seg_dict['string'],seg_dict['s'],seg_dict['e'],seg_dict['tag'],SegmentType.TABLE,seg_dict['order'])
-
+                seg.center_segment()
                 segments.append(seg)
-            
             elif (seg_type == SegmentType.SUBTITLE):
                 if (not seg_dict['valid']):
                     seg = Segment(seg_dict['string'],seg_dict['s'],seg_dict['e'],seg_dict['tag'],SegmentType.BODY,seg_dict['order'])
