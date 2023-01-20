@@ -90,8 +90,8 @@ class Pipe:
             raise Exception("tra failed to fetch")
         result_text = tra.extract(fetched,output_format="xml",include_formatting=True,include_images=include_imgs,include_tables=include_tables)
         self.text = result_text
-        print(self.text)
-        print("----------")
+        # print(self.text)
+        # print("----------")
 
         page = requests.get(self.url)
         page.encoding = 'utf-8'
@@ -104,7 +104,7 @@ class Pipe:
         match_obj = re.search(pattern,self.text)
         self.title,self.date,self.tags = match_obj.group(1),match_obj.group(2),match_obj.group(3).split(',')
 
-        print([self.tags,self.date,self.title])
+        # print([self.tags,self.date,self.title])
 
     # break the html into defined segments of pure texts, tables, images, and subtitles
     def define_segments(self):
@@ -161,9 +161,6 @@ class Pipe:
             if (curr_seg.s == last_seg.e):
                 last_seg = curr_seg
                 continue
-            print(i)
-            print(curr_seg.s)
-            print(last_seg.e)
             return False
         return True
 
@@ -197,7 +194,7 @@ class Pipe:
             clean_text = bs.text
 
             if (segment.type == SegmentType.SUBTITLE):
-                self.segments[i] = Subtitle(clean_text,2,segment)
+                self.segments[i] = Subtitle(clean_text,3,segment)
                 # self.subtitles.append(Subtitle(clean_text,1,segment))
 
             elif (segment.type == SegmentType.BODY):

@@ -28,9 +28,9 @@ class BookstackRequest:
 
     def img_level_map(self,level):
         if (level in [1,2,3]):
-            return 'h' + str(level+1)
+            return 'h' + str(level+2)
         if (level >= 4):
-            return 'h5'
+            return 'h6'
 
     def convert_segments(self):
         segments = []
@@ -53,6 +53,9 @@ class BookstackRequest:
                     seg = Subtitle(seg_dict['text'],seg_dict['level'],seg)
                     seg.tag = self.img_level_map(seg.level)
                     seg.string = "<%s>%s</%s>" % (seg.tag,seg.text,seg.tag)
+
+                    padding_seg = Segment("<p></p>",-1,-1,"p",SegmentType.BODY,seg.order - 1)
+                    segments.append(padding_seg)
                 segments.append(seg)
         self.segments = segments
 
@@ -107,11 +110,11 @@ class BookstackRequest:
         ret.encoding = 'utf-8'
         self.post_return = json.loads(ret.text)
 
-        with open('post_return.json','w') as f:
-            f.write(ret.text)
+        # with open('post_return.json','w') as f:
+        #     f.write(ret.text)
 
-        with open('post_imgs.json','w') as f:
-            f.write(json.dumps(self.imgs))
+        # with open('post_imgs.json','w') as f:
+        #     f.write(json.dumps(self.imgs))
 
     def post_attachments(self):
         pass
