@@ -42,14 +42,18 @@ class BookstackRequest:
                 segments.append(seg)
             elif (seg_type == SegmentType.TABLE):
                 seg = Segment(seg_dict['string'],seg_dict['s'],seg_dict['e'],seg_dict['tag'],SegmentType.TABLE,seg_dict['order'])
-                 
+
                 segments.append(seg)
             
             elif (seg_type == SegmentType.SUBTITLE):
-                seg = Segment(seg_dict['string'],seg_dict['s'],seg_dict['e'],seg_dict['tag'],SegmentType.SUBTITLE,seg_dict['order']) 
-                seg = Subtitle(seg_dict['text'],seg_dict['level'],seg)
-                seg.tag = self.img_level_map(seg.level)
-                seg.string = "<%s>%s</%s>" % (seg.tag,seg.text,seg.tag)
+                if (not seg_dict['valid']):
+                    seg = Segment(seg_dict['string'],seg_dict['s'],seg_dict['e'],seg_dict['tag'],SegmentType.BODY,seg_dict['order'])
+                    seg.update_tag("p")
+                else:
+                    seg = Segment(seg_dict['string'],seg_dict['s'],seg_dict['e'],seg_dict['tag'],SegmentType.SUBTITLE,seg_dict['order']) 
+                    seg = Subtitle(seg_dict['text'],seg_dict['level'],seg)
+                    seg.tag = self.img_level_map(seg.level)
+                    seg.string = "<%s>%s</%s>" % (seg.tag,seg.text,seg.tag)
                 segments.append(seg)
         self.segments = segments
 
@@ -63,9 +67,9 @@ class BookstackRequest:
             if (not img_ret.ok):
                 img_string = "<img src=\"%s\" referrerPolicy=\"no-referrer\" />" % img['url']
             else:
-                bts64 = base64.b64encode(img_ret.content)
-                src = "data:image/png;base64, " + str(bts64)
-                img_string = "<img src=\"%s\" />" % src
+                bts64 = base64.b64encode(img_ret.content).decode()
+                src = "data:image/jpg;base64, " + str(bts64)
+                img_string = "<img src=\"%s\" width=\"350px\" style=\"display: block; margin-left: auto; margin-right: auto; padding-bottom: 30px\"/>" % src
             
             seg = Segment(img_string,-1,-1,"img",SegmentType.IMAGE,img['order'])
             self.segments.append(seg)
@@ -87,11 +91,12 @@ class BookstackRequest:
         tags.extend([{"name":"关键词","value":entry} for entry in self.keywords])
 
         post_data = {
-            "book_id":int(self.book_id),
+            "book_id":self.book_id,
             "name":self.title,
             "html":self.final_body,
-            "tags":tags
+            "tags":tags,
         }
+
         headers = {
             "Authorization":"Token vZdwWsto1ZJHjyvQ9mDmzp9dZTDh3Z7I:OxrfZbHz09xnUSbm6mRb7aY1XtwjRmU8",
         }
@@ -102,6 +107,12 @@ class BookstackRequest:
         
         ret.encoding = 'utf-8'
         self.post_return = json.loads(ret.text)
+
+        with open('post_return.json','w') as f:
+            f.write(ret.text)
+
+        with open('post_imgs.json','w') as f:
+            f.write(json.dumps(self.imgs))
 
     def post_attachments(self):
         pass

@@ -23,6 +23,15 @@ class Segment:
         self.type = type
         self.order = order
 
+    def update_tag(self,new_tag):
+        bs = BeautifulSoup(self.string,"html.parser")
+        new_tag_object = bs.new_tag(new_tag)
+        new_tag_object.string = bs.text
+        self.string = str(new_tag_object)
+        self.tag = new_tag
+
+    # <div style="display: flex; text-align:center; margin-left:auto; margin-right:auto; justify-content:center">
+
     def get_inner_text(self):
         bs = BeautifulSoup(self.string)
         return bs.text
