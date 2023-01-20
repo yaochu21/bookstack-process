@@ -37,11 +37,16 @@ class BookstackRequest:
         for seg_dict in self.segments:
             seg_type = SegmentType(seg_dict['type'])
 
-            if (seg_type in [SegmentType.BODY,SegmentType.TABLE,SegmentType.NONE]):
+            if (seg_type in [SegmentType.BODY,SegmentType.NONE]):
                 seg = Segment(seg_dict['string'],seg_dict['s'],seg_dict['e'],seg_dict['tag'],SegmentType.BODY,seg_dict['order']) 
                 segments.append(seg)
+            elif (seg_type == SegmentType.TABLE):
+                seg = Segment(seg_dict['string'],seg_dict['s'],seg_dict['e'],seg_dict['tag'],SegmentType.TABLE,seg_dict['order'])
+                 
+                segments.append(seg)
+            
             elif (seg_type == SegmentType.SUBTITLE):
-                seg = Segment(seg_dict['string'],seg_dict['s'],seg_dict['e'],seg_dict['tag'],SegmentType.BODY,seg_dict['order']) 
+                seg = Segment(seg_dict['string'],seg_dict['s'],seg_dict['e'],seg_dict['tag'],SegmentType.SUBTITLE,seg_dict['order']) 
                 seg = Subtitle(seg_dict['text'],seg_dict['level'],seg)
                 seg.tag = self.img_level_map(seg.level)
                 seg.string = "<%s>%s</%s>" % (seg.tag,seg.text,seg.tag)
