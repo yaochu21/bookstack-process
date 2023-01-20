@@ -1,2 +1,2 @@
 # bookstack-process
-A data processing pipeline to scrape web article and format it for bookstack. Deployed with project bookstack-submit.
+A backend data processing pipeline to scrape and format web articles for bookstack. Deployed with frontend project [bookstack-submit](https://github.com/yaochu21/bookstack-submit).
