@@ -1,6 +1,7 @@
 import requests
 import json
 from bs4 import BeautifulSoup
+import base64
 from .session import Segment,SegmentType,Image,Subtitle
 # from session import Segment,SegmentType,Image,Subtitle
 
@@ -51,7 +52,16 @@ class BookstackRequest:
         for img in self.imgs:
             if (not img['valid']):
                 continue
-            img_string = "<img src=\"%s\" referrerPolicy=\"no-referrer\" />" % img['url']
+
+            img_string = ""
+            img_ret = requests.get(img['url'])
+            if (not img_ret.ok):
+                img_string = "<img src=\"%s\" referrerPolicy=\"no-referrer\" />" % img['url']
+            else:
+                bts64 = base64.b64encode(img_ret.content)
+                src = "data:image/png;base64, " + str(bts64)
+                img_string = "<img src=\"%s\" />" % src
+            
             seg = Segment(img_string,-1,-1,"img",SegmentType.IMAGE,img['order'])
             self.segments.append(seg)
 
@@ -86,7 +96,7 @@ class BookstackRequest:
             raise Exception("Bookstack api invalid response: %s" % ret.status_code)
         
         ret.encoding = 'utf-8'
-        self.post_return = ret.text
+        self.post_return = json.loads(ret.text)
 
     def post_attachments(self):
         pass
