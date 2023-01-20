@@ -63,7 +63,7 @@ def generate(data):
         request.post_attachments()
     except Exception as e:
         raise ValueError("Failed to post attachments: " + str(e))
-    return {"ret":request.post_return,"body":request.final_body}
+    return "Success"
 
 if __name__ == "__main__":
     # urls = [

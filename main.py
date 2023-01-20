@@ -34,7 +34,4 @@ async def process(input: Input):
 async def publish(input: Input):
     if not input.data:
         raise HTTPException(status_code=400, detail="Missing data")
-    try:
-        return generate(input.data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return generate(input.data)

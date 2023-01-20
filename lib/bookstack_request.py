@@ -72,8 +72,8 @@ class BookstackRequest:
         tags.extend([{"name":"关键词","value":entry} for entry in self.keywords])
 
         post_data = {
-            "book_id":self.book_id,
-            "name":self.title + "-测试页面",
+            "book_id":int(self.book_id),
+            "name":self.title,
             "html":self.final_body,
             "tags":tags
         }
@@ -88,5 +88,5 @@ class BookstackRequest:
         ret.encoding = 'utf-8'
         self.post_return = ret.text
 
-    def post_attachments():
+    def post_attachments(self):
         pass
