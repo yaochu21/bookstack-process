@@ -81,14 +81,15 @@ class BookstackRequest:
         tags.extend([{"name":"调查方式","value":entry} for entry in self.rtype])
         tags.extend([{"name":"关键词","value":entry} for entry in self.keywords])
 
-        headers = {
-            "Authorization":"Token vZdwWsto1ZJHjyvQ9mDmzp9dZTDh3Z7I:OxrfZbHz09xnUSbm6mRb7aY1XtwjRmU8",
-        }
         post_data = {
             "book_id":self.book_id,
             "name":self.title,
             "html":self.final_body,
-            "tags":self.keywords
+            "tags":tags,
+        }
+
+        headers = {
+            "Authorization":"Token vZdwWsto1ZJHjyvQ9mDmzp9dZTDh3Z7I:OxrfZbHz09xnUSbm6mRb7aY1XtwjRmU8",
         }
 
         ret = requests.post("https://report.laodongqushi.com/api/pages",json=post_data,headers=headers)
