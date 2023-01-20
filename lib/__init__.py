@@ -1,9 +1,9 @@
-# from .session import Pipe
-# from .bookstack_request import BookstackRequest
-# from .utils import validate
-from session import Pipe
-from bookstack_request import BookstackRequest
-from utils import validate
+from .session import Pipe
+from .bookstack_request import BookstackRequest
+from .utils import validate
+# from session import Pipe
+# from bookstack_request import BookstackRequest
+# from utils import validate
 
 import json
 
@@ -63,7 +63,7 @@ def generate(data):
         request.post_attachments()
     except Exception as e:
         raise ValueError("Failed to post attachments: " + str(e))
-    return "None"
+    return {"ret":request.post_return,"body":request.final_body}
 
 if __name__ == "__main__":
     # urls = [

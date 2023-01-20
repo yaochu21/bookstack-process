@@ -1,8 +1,8 @@
 import requests
 import json
 from bs4 import BeautifulSoup
-from session import Segment,SegmentType,Image,Subtitle
-# from .session import Segment,SegmentType,Image,Subtitle
+from .session import Segment,SegmentType,Image,Subtitle
+# from session import Segment,SegmentType,Image,Subtitle
 
 # incomplete & deprecated, this request should be handled by the client side
 class BookstackRequest:
