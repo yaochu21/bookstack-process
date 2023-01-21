@@ -41,8 +41,8 @@ def extract(input):
     pipe_data = pipe.get_dict_data()
     return pipe_data
 
-def generate(data):
-    request = BookstackRequest(data)
+def generate(data,url):
+    request = BookstackRequest(data,url)
     try:
         request.convert_segments()
     except Exception as e:

@@ -7,7 +7,7 @@ from .session import Segment,SegmentType,Image,Subtitle
 
 # incomplete & deprecated, this request should be handled by the client side
 class BookstackRequest:
-    def __init__(self,data):
+    def __init__(self,data,url):
         data_dict = json.loads(data)
         self.html = data_dict['text']
         self.title = data_dict['title']
@@ -17,6 +17,7 @@ class BookstackRequest:
         self.rtype = data_dict['rtype']
         self.keywords = data_dict['tags']
         self.book_id = data_dict['book_id']
+        self.url = url
 
         self.imgs = data_dict['imgs']
         self.segments = data_dict['segments']
@@ -117,4 +118,19 @@ class BookstackRequest:
         #     f.write(json.dumps(self.imgs))
 
     def post_attachments(self):
-        pass
+        id = self.post_return['id']
+        url = self.url
+
+        post_data = {
+            "name": "原文",
+            "uploaded_to": id,
+            "link": url
+        }
+        headers = {
+            "Authorization":"Token vZdwWsto1ZJHjyvQ9mDmzp9dZTDh3Z7I:OxrfZbHz09xnUSbm6mRb7aY1XtwjRmU8",
+        }
+
+        ret = requests.post("https://report.laodongqushi.com/api/attachments",json=post_data,headers=headers)
+
+        if (not ret.ok):
+            raise Exception("Bookstack api invalid response")

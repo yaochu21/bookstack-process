@@ -6,7 +6,6 @@ from enum import Enum
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 
-# used for debugging
 class SegmentType(Enum):
     BODY = 'BODY'
     SUBTITLE = 'SUBTITLE'
