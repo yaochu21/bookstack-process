@@ -5,6 +5,9 @@ import re
 from enum import Enum
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+import base64
+import io
+from PIL import Image as Img
 
 class SegmentType(Enum):
     BODY = 'BODY'
@@ -224,6 +227,15 @@ class Pipe:
         for i,img in enumerate(imgs):
             url = img['src']
             url = urljoin(self.url,url)
+
+            img_ret = requests.get(url)
+            if (not img_ret.ok):
+                continue
+            img_data = base64.b64encode(img_ret.content).decode()
+            im = Img.open(io.BytesIO(img_data))
+            width,height = im.size
+            if (width * height < 500 * 500):
+                continue
             self.imgs.append(Image(url,i,False))
 
     def get_dict_data(self):

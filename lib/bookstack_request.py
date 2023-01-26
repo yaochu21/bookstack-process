@@ -134,3 +134,14 @@ class BookstackRequest:
 
         if (not ret.ok):
             raise Exception("Bookstack api invalid response")
+        
+        post_data = {
+            "name": "备份",
+            "uploaded_to": id,
+            "link": "https://archive.vn/" + url
+        }
+
+        ret = requests.post("https://report.laodongqushi.com/api/attachments",json=post_data,headers=headers)
+
+        if (not ret.ok):
+            raise Exception("Bookstack api invalid response")
