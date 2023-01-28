@@ -41,7 +41,6 @@ class Segment:
     def center_segment(self):
         new_string = "<div style=\"display: flex; text-align:center; margin-left:auto; margin-right:auto; justify-content:center\"> %s </div>" % self.string
         self.string = new_string
-        
 
     def to_dict(self):
         return {"string":self.string,"s":self.s,"e":self.e,"tag":self.tag,"type":self.type.name,"order":self.order}
@@ -111,9 +110,10 @@ class Pipe:
     # break the html into defined segments of pure texts, tables, images, and subtitles
     def define_segments(self):
         patterns = []
-        tags = ['img','table','hi','h1','h2','h3','p']
+        tags = ['img','table','head rend=\'h1\'','head rend=\'h2\'','head rend=\'h3\'','head rend=\'hi\'','p']
         for tag in tags:
             patterns.append(re.compile(r'<%s.*?>(.*?)</%s>' % (tag,tag)))
+        tags = ['img','table','h1','h2','h3','hi','p']
 
         for pattern,tag in zip(patterns,tags):
             objs = re.finditer(pattern,self.text)
@@ -124,7 +124,7 @@ class Pipe:
                 seg_type = SegmentType.IMAGE
             elif (tag == 'table'):
                 seg_type = SegmentType.TABLE
-            elif (tag in ['hi','h1','h2','h3']):
+            else:
                 seg_type = SegmentType.SUBTITLE
 
             for obj in objs:
@@ -204,7 +204,7 @@ class Pipe:
                     self.segments[i] = Subtitle(clean_text,2,segment)
                     #self.subtitles.append(Subtitle(clean_text,1,segment.s))
     
-    def title_length_rule(self,line,thresh=15):
+    def title_length_rule(self,line,thresh=20):
         return (len(line) <= thresh) and (len(line) > 0)
 
     def title_prefix_rule(self,line):
@@ -231,12 +231,11 @@ class Pipe:
             img_ret = requests.get(url)
             if (not img_ret.ok):
                 continue
-            img_data = base64.b64encode(img_ret.content).decode()
-            im = Img.open(io.BytesIO(img_data))
-            width,height = im.size
-            if (width * height < 500 * 500):
+            b64string = base64.b64encode(img_ret.content)
+            est_size = (len(b64string) * 3) / 4
+            if (est_size < 35000):
                 continue
-            self.imgs.append(Image(url,i,False))
+            self.imgs.append(Image(b64string,i,False))
 
     def get_dict_data(self):
         sorted_segments_dict = [segment.to_dict() for segment in self.segments]

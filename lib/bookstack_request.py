@@ -72,7 +72,7 @@ class BookstackRequest:
             else:
                 bts64 = base64.b64encode(img_ret.content).decode()
                 src = "data:image/jpg;base64, " + str(bts64)
-                img_string = "<img src=\"%s\" width=\"350px\" style=\"display: block; margin-left: auto; margin-right: auto; padding-bottom: 30px\"/>" % src
+                img_string = "<img src=\"%s\" width=\"80%\" style=\"display: block; margin-left: auto; margin-right: auto; padding-bottom: 30px\"/>" % src
             
             seg = Segment(img_string,-1,-1,"img",SegmentType.IMAGE,img['order'])
             self.segments.append(seg)
@@ -110,12 +110,6 @@ class BookstackRequest:
         
         ret.encoding = 'utf-8'
         self.post_return = json.loads(ret.text)
-
-        # with open('post_return.json','w') as f:
-        #     f.write(ret.text)
-
-        # with open('post_imgs.json','w') as f:
-        #     f.write(json.dumps(self.imgs))
 
     def post_attachments(self):
         id = self.post_return['id']
