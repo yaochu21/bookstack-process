@@ -65,14 +65,8 @@ class BookstackRequest:
             if (not img['valid']):
                 continue
 
-            img_string = ""
-            img_ret = requests.get(img['url'])
-            if (not img_ret.ok):
-                img_string = "<img src=\"%s\" referrerPolicy=\"no-referrer\" />" % img['url']
-            else:
-                bts64 = base64.b64encode(img_ret.content).decode()
-                src = "data:image/jpg;base64, " + str(bts64)
-                img_string = "<img src=\"%s\" width=\"80%\" style=\"display: block; margin-left: auto; margin-right: auto; padding-bottom: 30px\"/>" % src
+            src = "data:image/jpg;base64, " + str(img['url'])
+            img_string = "<img src=\"{0}\" width=\"80%\" style=\"display: block; margin-left: auto; margin-right: auto; padding-bottom: 30px\"/>".format(src)
             
             seg = Segment(img_string,-1,-1,"img",SegmentType.IMAGE,img['order'])
             self.segments.append(seg)
