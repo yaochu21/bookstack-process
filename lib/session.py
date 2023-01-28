@@ -110,10 +110,10 @@ class Pipe:
     # break the html into defined segments of pure texts, tables, images, and subtitles
     def define_segments(self):
         patterns = []
-        tags = ['img','table','head rend=\'h1\'','head rend=\'h2\'','head rend=\'h3\'','head rend=\'hi\'','p']
+        tags = ['img','table','head rend=\'h1\'','head rend=\'h2\'','head rend=\'h3\'','head rend=\'hi\'','hi','p']
         for tag in tags:
             patterns.append(re.compile(r'<%s.*?>(.*?)</%s>' % (tag,tag)))
-        tags = ['img','table','h1','h2','h3','hi','p']
+        tags = ['img','table','h1','h2','h3','hi','hi','p']
 
         for pattern,tag in zip(patterns,tags):
             objs = re.finditer(pattern,self.text)
