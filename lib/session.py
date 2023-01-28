@@ -196,7 +196,10 @@ class Pipe:
             clean_text = bs.text
 
             if (segment.type == SegmentType.SUBTITLE):
-                self.segments[i] = Subtitle(clean_text,3,segment)
+                level = 3
+                if (segment.tag in ['h1','h2']):
+                    level = 2
+                self.segments[i] = Subtitle(clean_text,level,segment)
                 # self.subtitles.append(Subtitle(clean_text,1,segment))
 
             elif (segment.type == SegmentType.BODY):
