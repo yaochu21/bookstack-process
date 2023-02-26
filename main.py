@@ -28,7 +28,7 @@ async def process(input: Input):
     try:
         return extract(input.url)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=600, detail=str(e))
 
 @app.post("/publish/")
 async def publish(input: Input):

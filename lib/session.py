@@ -104,6 +104,7 @@ class Pipe:
         pattern = re.compile(r'<doc.*title="(.*?)".*date="(.*?)".*tags="(.*?)".*>')
         match_obj = re.search(pattern,self.text)
         self.title,self.date,self.tags = match_obj.group(1),match_obj.group(2),match_obj.group(3).split(',')
+        self.tags = []
 
         # print([self.tags,self.date,self.title])
 
@@ -227,8 +228,15 @@ class Pipe:
 
     def extract_images(self):
         imgs = self.bs4.find_all('img')
+        print(imgs)
         for i,img in enumerate(imgs):
-            url = img['src']
+            url = None
+            if (img.has_attr('src')):
+                url = img['src']
+            elif (img.has_attr('data-src')):
+                url = img['data-src']
+            else:
+                continue
             url = urljoin(self.url,url)
 
             img_ret = requests.get(url)
@@ -236,7 +244,7 @@ class Pipe:
                 continue
             b64string = base64.b64encode(img_ret.content)
             est_size = (len(b64string) * 3) / 4
-            if (est_size < 35000):
+            if (est_size < 20000):
                 continue
             self.imgs.append(Image(b64string,i,False))
 

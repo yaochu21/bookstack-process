@@ -2,8 +2,8 @@ import requests
 import json
 from bs4 import BeautifulSoup
 import base64
-from .session import Segment,SegmentType,Image,Subtitle
-# from session import Segment,SegmentType,Image,Subtitle
+# from .session import Segment,SegmentType,Image,Subtitle
+from session import Segment,SegmentType,Image,Subtitle
 
 # incomplete & deprecated, this request should be handled by the client side
 class BookstackRequest:
@@ -115,7 +115,7 @@ class BookstackRequest:
             "link": url
         }
         headers = {
-            "Authorization":"Token vZdwWsto1ZJHjyvQ9mDmzp9dZTDh3Z7I:OxrfZbHz09xnUSbm6mRb7aY1XtwjRmU8",
+            "Authorization":"",
         }
 
         ret = requests.post("https://report.laodongqushi.com/api/attachments",json=post_data,headers=headers)
